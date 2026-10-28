@@ -4,8 +4,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#101122">
-  <meta name="description" content="คุยต่อ — แชตที่ประวัติไม่หายหลังออกจากระบบ และกลับมาคุยต่อได้จากทุกอุปกรณ์">
-  <title>คุยต่อ | แชตต่อได้ทุกที่</title>
+  <meta name="description" content="SEMETRIC — เว็บแชตที่เก็บประวัติการสนทนา และกลับมาใช้งานต่อได้จากทุกอุปกรณ์">
+  <title>SEMETRIC | แชตต่อเนื่องทุกอุปกรณ์</title>
+  <meta name="application-name" content="SEMETRIC">
+  <meta name="apple-mobile-web-app-title" content="SEMETRIC">
+  <meta property="og:title" content="SEMETRIC | แชตต่อเนื่องทุกอุปกรณ์">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -17,9 +20,9 @@
     <div class="auth-decor decor-one"></div><div class="auth-decor decor-two"></div>
     <div class="auth-frame">
       <div class="auth-intro">
-        <div class="brand-mark" aria-hidden="true">✦</div>
-        <div class="eyebrow">PERSISTENT CHAT</div>
-        <h1>คุยต่อ<br><span>จากที่ค้างไว้</span></h1>
+        <div class="brand-mark" aria-hidden="true">S</div>
+        <div class="eyebrow">SEMETRIC · PERSISTENT CHAT</div>
+        <h1>SEMETRIC<br><span>แชตต่อได้ทุกที่</span></h1>
         <p>ปิดคอม ออกจากระบบ หรือเปลี่ยนอุปกรณ์<br>เปิดมาอีกครั้งก็ยังเจอบทสนทนาเดิม</p>
         <div class="features"><span>◉ ข้อความเรียลไทม์</span><span>◉ แชตย้อนหลัง</span><span>◉ แชร์ห้องกับเพื่อน</span></div>
       </div>
@@ -52,7 +55,7 @@
   <div id="appView" class="app-shell" hidden>
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-top">
-        <div class="brand"><span class="mini-logo">✦</span><span>คุยต่อ<small>แชตไม่หาย แม้ Logout</small></span></div>
+        <div class="brand"><span class="mini-logo">S</span><span>SEMETRIC<small>แชตไม่หาย แม้ Logout</small></span></div>
         <button id="devicesButton" class="icon-btn" type="button" title="อุปกรณ์ที่เคยใช้" aria-label="อุปกรณ์ที่เคยใช้">▣</button>
       </div>
       <div class="sidebar-content">
@@ -66,7 +69,7 @@
     </aside>
     <main class="main-panel" id="mainPanel">
       <div id="chatEmpty" class="empty-conversation">
-        <div class="empty-icon">✉</div><h2>กลับมาคุยต่อได้เสมอ</h2>
+        <div class="empty-icon">✉</div><h2>สนทนาต่อได้เสมอ</h2>
         <p>สร้างห้องหรือเลือกบทสนทนาทางซ้ายเพื่ออ่านและส่งข้อความ</p>
         <div class="empty-notice">เพื่อนยังส่งข้อความเข้าห้องได้แม้คุณปิดเว็บ<br>เมื่อเปิดใหม่ก็อ่านย้อนหลังได้</div>
       </div>
@@ -84,7 +87,7 @@
     </main>
   </div>
 
-  <section id="setupView" class="auth-page" hidden><div class="setup-card"><div class="brand-mark">✦</div><h1>ตั้งค่าระบบก่อนเริ่มใช้</h1><p>เว็บพร้อมสำหรับ GitHub Pages แล้ว แต่ยังไม่ได้เชื่อมฐานข้อมูล Supabase</p><p>ทำตามไฟล์ <strong>README.md</strong> แล้วใส่ Project URL และ Publishable key ใน <code>config.js</code> จากนั้นรัน SQL ในไฟล์ <code>supabase.sql</code></p><p class="muted">อย่าใส่ Secret key หรือ Service Role key ในหน้าเว็บ</p><p id="setupError" class="error-text" hidden></p></div></section>
+  <section id="setupView" class="auth-page" hidden><div class="setup-card"><div class="brand-mark">S</div><h1>ตั้งค่าระบบก่อนเริ่มใช้</h1><p>เว็บพร้อมสำหรับ GitHub Pages แล้ว แต่ยังไม่ได้เชื่อมฐานข้อมูล Supabase</p><p>ทำตามไฟล์ <strong>README.md</strong> แล้วใส่ Project URL และ Publishable key ใน <code>config.js</code> จากนั้นรัน SQL ในไฟล์ <code>supabase.sql</code></p><p class="muted">อย่าใส่ Secret key หรือ Service Role key ในหน้าเว็บ</p><p id="setupError" class="error-text" hidden></p></div></section>
 
   <div id="devicesModal" class="modal-backdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="devicesTitle"><div class="modal-header"><div><div class="eyebrow">YOUR ACCOUNT</div><h2 id="devicesTitle">อุปกรณ์ที่เคยเข้าสู่ระบบ</h2></div><button type="button" id="closeDevices" class="icon-btn" aria-label="ปิดหน้าต่าง">✕</button></div><p class="muted">รายการอุปกรณ์ของบัญชีนี้ จะยังอยู่หลัง Logout</p><div id="deviceList" class="devices-list"></div><p class="modal-footnote">ข้อมูลอุปกรณ์แสดงการใช้งานเว็บล่าสุด ไม่ได้หมายความว่าเว็บควบคุมอุปกรณ์ได้หลังปิดแอป</p></section></div>
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
