@@ -9,6 +9,33 @@ const state = {
   firstId: null, hasOlder: false, loadingMore: false,
   bootCount: 0, recovering: false, inviteBusy: false,
 };
+// Mobile visual viewport: keyboard/browser chrome reduce the visible area on iOS/Android.
+// We resize the app shell, not the entire page, so the composer stays above the keyboard.
+let viewportFrame = null;
+function syncVisualViewport() {
+  if (viewportFrame !== null) cancelAnimationFrame(viewportFrame);
+  viewportFrame = requestAnimationFrame(() => {
+    viewportFrame = null;
+    const viewport = window.visualViewport;
+    const height = viewport?.height || window.innerHeight;
+    const top = viewport?.offsetTop || 0;
+    document.documentElement.style.setProperty("--visual-height", Math.round(height) + "px");
+    document.documentElement.style.setProperty("--visual-top", Math.max(0, Math.round(top)) + "px");
+    // While typing, keep the last message visible when the keyboard changes size.
+    if (document.activeElement === $("messageInput") && !$('chatScreen').hidden) {
+      const area = $("messageArea");
+      requestAnimationFrame(() => { area.scrollTop = area.scrollHeight; });
+    }
+  });
+}
+window.addEventListener("resize", syncVisualViewport, {passive: true});
+window.addEventListener("orientationchange", syncVisualViewport, {passive: true});
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", syncVisualViewport, {passive: true});
+  window.visualViewport.addEventListener("scroll", syncVisualViewport, {passive: true});
+}
+syncVisualViewport();
+
 const MSG_PAGE = 50;
 const CHAT_SELECT = "id,room_id,sender_id,content,created_at,sender:profiles!messages_sender_id_fkey(display_name)";
 
@@ -55,12 +82,14 @@ function teardownApp() {
   $("devicesModal").hidden = true;
 }
 function showAuth() {
+  document.documentElement.classList.remove("chat-app-running");
   teardownApp(); $("authView").hidden = false; $("appView").hidden = true;
   $("setupView").hidden = true; $("appView").classList.remove("mobile-chat");
   $("password").value = "";
   if (!state.recovering) $("recoveryForm").hidden = true;
 }
 function showSetup(error) {
+  document.documentElement.classList.remove("chat-app-running");
   $("authView").hidden = true; $("appView").hidden = true;
   $("setupView").hidden = false;
   if (error) errorAt("setupError", text(error));
@@ -104,6 +133,8 @@ async function showApp(user) {
   state.me = user;
   const boot = state.bootCount;
   $("authView").hidden = true; $("setupView").hidden = true; $("appView").hidden = false;
+  document.documentElement.classList.add("chat-app-running");
+  syncVisualViewport();
   $("chatEmpty").hidden = false; $("chatScreen").hidden = true;
   $("appView").classList.remove("mobile-chat");
   $("ownUsername").textContent = currentName(); $("ownAvatar").textContent = initial(currentName());
@@ -211,7 +242,10 @@ async function openRoom(roomId) {
       updateStatus();
       if (state.realtimeReady) refreshLatestMessages().catch(() => {});
     });
-  $("messageInput").focus();
+  // Do not pop open a mobile keyboard just by selecting a room.
+  if (window.matchMedia("(pointer: fine) and (min-width: 641px)").matches) {
+    $("messageInput").focus();
+  }
 }
 function updateStatus() {
   $("connectionStatus").textContent = state.realtimeReady ? "ข้อความเรียลไทม์พร้อมใช้" : "กำลังเชื่อมต่อ · ตรวจข้อความอัตโนมัติ";

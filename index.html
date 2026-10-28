@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#101122">
   <meta name="description" content="คุยต่อ — แชตที่ประวัติไม่หายหลังออกจากระบบ และกลับมาคุยต่อได้จากทุกอุปกรณ์">
   <title>คุยต่อ | แชตต่อได้ทุกที่</title>
@@ -78,7 +78,7 @@
           <button id="inviteButton" type="button" class="share-button" title="คัดลอกลิงก์เชิญ">แชร์ห้อง</button><button id="rotateInviteButton" type="button" class="share-button" hidden>รีเซ็ตลิงก์</button>
         </header>
         <div id="messageArea" class="messages-area"><button id="olderButton" type="button" class="older-button" hidden>โหลดข้อความก่อนหน้า</button><div id="messageList" class="message-list"></div></div>
-        <form id="messageForm" class="composer"><input id="messageInput" maxlength="4000" required autocomplete="off" placeholder="พิมพ์ข้อความ..." aria-label="ข้อความ"><button id="sendButton" type="submit" aria-label="ส่งข้อความ">➤</button></form>
+        <form id="messageForm" class="composer"><input id="messageInput" maxlength="4000" required autocomplete="off" enterkeyhint="send" placeholder="พิมพ์ข้อความ..." aria-label="ข้อความ"><button id="sendButton" type="submit" aria-label="ส่งข้อความ">➤</button></form>
         <p class="send-error" id="sendError" role="alert" hidden></p>
       </section>
     </main>

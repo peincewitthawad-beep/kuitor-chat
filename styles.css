@@ -7,3 +7,68 @@
 .share-button:hover{background:#3a315d}.setup-card{background:#18192c;border:1px solid #ffffff17;border-radius:25px;padding:38px;max-width:640px;line-height:1.85;color:#f5f3ff}.setup-card h1{font-size:28px}.setup-card p{color:#bcc0d5}.setup-card code{background:#30304a;padding:3px 5px;border-radius:5px;color:#e0d7ff}
 .message-author{font-weight:700;font-size:10px;color:#b9b1ff;margin:0 4px 2px}.mine .message-author{display:none}
 .device{word-break:break-word}.room-metadata{font-size:11px;color:#9693bd}.toast{max-width:85vw;white-space:pre-wrap;text-align:center}
+
+/*
+ * Mobile / keyboard layout patch (2026-10-29)
+ * 16px input text prevents iOS Safari's automatic focus zoom.
+ * Only the message list scrolls while the keyboard is open.
+ * --visual-height/top are updated using VisualViewport by app.js.
+ * Do not disable pinch-to-zoom: accessibility users can still zoom manually.
+ */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+.app-shell { height: var(--visual-height, 100dvh); min-height: 0; max-width: 100%; overflow: hidden; }
+.chat-screen, .main-panel, .sidebar { min-height: 0; }
+.chat-header, .composer { flex-shrink: 0; }
+.messages-area { min-height: 0; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.composer { padding-bottom: max(12px, env(safe-area-inset-bottom)); }
+.sidebar-bottom { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+.auth-page { overflow-x: hidden; overflow-y: auto; }
+.auth-frame, .auth-card { min-width: 0; }
+
+/* On phones and touch tablets, inputs <16px cause automatic Safari zoom. */
+@media (pointer: coarse), (max-width: 850px) {
+  input, select, textarea { font-size: 16px !important; }
+  .composer input { min-height: 47px; }
+}
+
+/* Fixed app pane follows the visible area above the mobile keyboard. */
+@media (max-width: 640px), (max-height: 540px) and (pointer: coarse) {
+  html.chat-app-running, html.chat-app-running body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+  .app-shell {
+    position: fixed;
+    top: var(--visual-top, 0px);
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: var(--visual-height, 100dvh);
+    max-height: var(--visual-height, 100dvh);
+    display: block;
+    overflow: hidden;
+  }
+  .sidebar, .main-panel { width: 100%; height: 100%; min-height: 0; }
+  .main-panel { display: none; }
+  .app-shell.mobile-chat .sidebar { display: none; }
+  .app-shell.mobile-chat .main-panel { display: block; }
+  .back-btn { display: block; }
+  .chat-header { min-height: 64px; padding: 9px 12px; gap: 8px; }
+  .chat-header .avatar { width: 36px; height: 36px; border-radius: 11px; }
+  .chat-heading strong { font-size: 14px; }
+  .chat-heading > span { font-size: 10px; }
+  .share-button { font-size: 11px; padding: 7px 8px; }
+  .composer { padding: 10px 12px max(10px, env(safe-area-inset-bottom)); gap: 8px; }
+  .composer input { font-size: 16px; padding: 12px 13px; border-radius: 12px; }
+  .composer button { width: 48px; height: 46px; flex: 0 0 48px; border-radius: 12px; }
+  .messages-area { padding: 15px 12px; }
+  .auth-page { min-height: 100dvh; height: auto; place-items: center; }
+}
+@media (max-width: 375px) {
+  .chat-header { gap: 5px; padding-inline: 8px; }
+  .chat-header .avatar { width: 32px; height: 32px; }
+  .chat-heading > span { display: none; }
+  .share-button { padding: 7px 6px; font-size: 10px; }
+  .chat-heading strong { font-size: 13px; }
+}
