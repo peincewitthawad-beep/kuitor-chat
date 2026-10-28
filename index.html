@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101122">
+  <meta name="description" content="คุยต่อ — แชตที่ประวัติไม่หายหลังออกจากระบบ และกลับมาคุยต่อได้จากทุกอุปกรณ์">
+  <title>คุยต่อ | แชตต่อได้ทุกที่</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script defer src="config.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <section id="authView" class="auth-page" hidden>
+    <div class="auth-decor decor-one"></div><div class="auth-decor decor-two"></div>
+    <div class="auth-frame">
+      <div class="auth-intro">
+        <div class="brand-mark" aria-hidden="true">✦</div>
+        <div class="eyebrow">PERSISTENT CHAT</div>
+        <h1>คุยต่อ<br><span>จากที่ค้างไว้</span></h1>
+        <p>ปิดคอม ออกจากระบบ หรือเปลี่ยนอุปกรณ์<br>เปิดมาอีกครั้งก็ยังเจอบทสนทนาเดิม</p>
+        <div class="features"><span>◉ ข้อความเรียลไทม์</span><span>◉ แชตย้อนหลัง</span><span>◉ แชร์ห้องกับเพื่อน</span></div>
+      </div>
+      <div class="auth-card">
+        <div class="tabs" role="tablist" aria-label="เข้าสู่ระบบหรือสมัครสมาชิก">
+          <button id="loginTab" type="button" class="tab active" aria-selected="true">เข้าสู่ระบบ</button>
+          <button id="registerTab" type="button" class="tab" aria-selected="false">สร้างบัญชี</button>
+        </div>
+        <h2 id="authTitle">ยินดีต้อนรับกลับ</h2>
+        <p id="authDescription" class="muted">ล็อกอินด้วยอีเมลเดิม เพื่ออ่านแชตย้อนหลัง</p>
+        <form id="authForm">
+          <div id="nameField" hidden><label for="displayName">ชื่อที่แสดงในแชต</label><input id="displayName" maxlength="40" autocomplete="nickname" placeholder="เช่น ปริ้นซ์"></div>
+          <label for="email">อีเมล</label><input id="email" type="email" required autocomplete="email" placeholder="name@example.com">
+          <label for="password">รหัสผ่าน</label><input id="password" type="password" required minlength="8" autocomplete="current-password" placeholder="อย่างน้อย 8 ตัวอักษร">
+          <button id="authSubmit" type="submit" class="primary-btn">เข้าสู่ระบบ <span>→</span></button>
+        </form>
+        <p id="authError" class="error-text" role="alert" hidden></p>
+        <p id="authInfo" class="success-text" role="status" hidden></p>
+        <button id="resetPasswordButton" type="button" class="text-button">ลืมรหัสผ่าน?</button>
+        <form id="recoveryForm" hidden>
+          <label for="newPassword">ตั้งรหัสผ่านใหม่</label>
+          <input id="newPassword" type="password" minlength="8" autocomplete="new-password" placeholder="รหัสใหม่อย่างน้อย 8 ตัวอักษร" required>
+          <button type="submit" class="primary-btn">บันทึกรหัสผ่านใหม่</button>
+        </form>
+        <p class="card-note">ข้อความเก็บอยู่บน Supabase และเปิดดูด้วยบัญชีเดิมได้ทุกอุปกรณ์<br>เฉพาะผู้ที่เป็นสมาชิกห้องเท่านั้นที่อ่านแชตในห้องได้</p>
+      </div>
+    </div>
+  </section>
+
+  <div id="appView" class="app-shell" hidden>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <div class="brand"><span class="mini-logo">✦</span><span>คุยต่อ<small>แชตไม่หาย แม้ Logout</small></span></div>
+        <button id="devicesButton" class="icon-btn" type="button" title="อุปกรณ์ที่เคยใช้" aria-label="อุปกรณ์ที่เคยใช้">▣</button>
+      </div>
+      <div class="sidebar-content">
+        <div class="section-heading"><h2>ห้องสนทนา</h2><span id="chatCount" class="count-pill">0</span></div>
+        <form id="createRoomForm" class="search-form"><input id="roomTitleInput" maxlength="80" required placeholder="ตั้งชื่อห้องใหม่ เช่น เพื่อน ๆ" aria-label="ชื่อห้องใหม่"><button type="submit" title="สร้างห้อง" aria-label="สร้างห้อง">＋</button></form>
+        <form id="joinRoomForm" class="search-form"><input id="inviteInput" placeholder="วางลิงก์หรือรหัสเชิญเข้าห้อง" aria-label="รหัสเชิญหรือ URL"><button type="submit" title="เข้าร่วมห้อง" aria-label="เข้าร่วมห้อง">↗</button></form>
+        <p id="roomError" class="inline-error" role="alert" hidden></p>
+        <div id="conversationList" class="conversation-list"><p class="blank-list">ยังไม่มีห้องสนทนา<br>สร้างห้องใหม่หรือใช้ลิงก์เชิญเพื่อเข้าร่วม</p></div>
+      </div>
+      <div class="sidebar-bottom"><div id="ownAvatar" class="avatar">U</div><div class="me-meta"><strong id="ownUsername">บัญชีของฉัน</strong><span id="ownEmail">ประวัติอยู่บนคลาวด์</span></div><button id="logoutButton" class="icon-btn" type="button" title="ออกจากระบบ" aria-label="ออกจากระบบ">⇥</button></div>
+    </aside>
+    <main class="main-panel" id="mainPanel">
+      <div id="chatEmpty" class="empty-conversation">
+        <div class="empty-icon">✉</div><h2>กลับมาคุยต่อได้เสมอ</h2>
+        <p>สร้างห้องหรือเลือกบทสนทนาทางซ้ายเพื่ออ่านและส่งข้อความ</p>
+        <div class="empty-notice">เพื่อนยังส่งข้อความเข้าห้องได้แม้คุณปิดเว็บ<br>เมื่อเปิดใหม่ก็อ่านย้อนหลังได้</div>
+      </div>
+      <section id="chatScreen" class="chat-screen" hidden>
+        <header class="chat-header">
+          <button id="backButton" type="button" class="back-btn" aria-label="กลับไปยังรายชื่อห้อง">‹</button>
+          <div id="chatAvatar" class="avatar avatar-purple">#</div>
+          <div class="chat-heading"><strong id="chatPerson">–</strong><span><span class="status-dot" id="statusDot"></span><span id="connectionStatus">กำลังเชื่อมต่อ...</span></span></div>
+          <button id="inviteButton" type="button" class="share-button" title="คัดลอกลิงก์เชิญ">แชร์ห้อง</button><button id="rotateInviteButton" type="button" class="share-button" hidden>รีเซ็ตลิงก์</button>
+        </header>
+        <div id="messageArea" class="messages-area"><button id="olderButton" type="button" class="older-button" hidden>โหลดข้อความก่อนหน้า</button><div id="messageList" class="message-list"></div></div>
+        <form id="messageForm" class="composer"><input id="messageInput" maxlength="4000" required autocomplete="off" placeholder="พิมพ์ข้อความ..." aria-label="ข้อความ"><button id="sendButton" type="submit" aria-label="ส่งข้อความ">➤</button></form>
+        <p class="send-error" id="sendError" role="alert" hidden></p>
+      </section>
+    </main>
+  </div>
+
+  <section id="setupView" class="auth-page" hidden><div class="setup-card"><div class="brand-mark">✦</div><h1>ตั้งค่าระบบก่อนเริ่มใช้</h1><p>เว็บพร้อมสำหรับ GitHub Pages แล้ว แต่ยังไม่ได้เชื่อมฐานข้อมูล Supabase</p><p>ทำตามไฟล์ <strong>README.md</strong> แล้วใส่ Project URL และ Publishable key ใน <code>config.js</code> จากนั้นรัน SQL ในไฟล์ <code>supabase.sql</code></p><p class="muted">อย่าใส่ Secret key หรือ Service Role key ในหน้าเว็บ</p><p id="setupError" class="error-text" hidden></p></div></section>
+
+  <div id="devicesModal" class="modal-backdrop" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="devicesTitle"><div class="modal-header"><div><div class="eyebrow">YOUR ACCOUNT</div><h2 id="devicesTitle">อุปกรณ์ที่เคยเข้าสู่ระบบ</h2></div><button type="button" id="closeDevices" class="icon-btn" aria-label="ปิดหน้าต่าง">✕</button></div><p class="muted">รายการอุปกรณ์ของบัญชีนี้ จะยังอยู่หลัง Logout</p><div id="deviceList" class="devices-list"></div><p class="modal-footnote">ข้อมูลอุปกรณ์แสดงการใช้งานเว็บล่าสุด ไม่ได้หมายความว่าเว็บควบคุมอุปกรณ์ได้หลังปิดแอป</p></section></div>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
